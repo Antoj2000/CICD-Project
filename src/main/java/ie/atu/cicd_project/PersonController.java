@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/employee")
+@RequestMapping("/employee")  //Base URL Mapping
 @Validated
 public class PersonController {
 
-    private PersonService myService;
+    private PersonService myService;  //Dependency Injection for service
 
     public PersonController(PersonService myService) {
 
@@ -23,6 +23,14 @@ public class PersonController {
 
     private List<Person> list = new ArrayList<>();
     //Creating a class which is interested in request and responses. Separation of concern
+
+    @PostMapping
+    public List<Person> addPerson(@RequestBody @Valid Person person){
+        //Delegates logic to service layer
+        return myService.addPerson(person);
+    }
+
+
     @GetMapping
     public List<Person> getAllPersons(){
 
