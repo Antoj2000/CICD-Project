@@ -14,9 +14,8 @@ import java.util.List;
 public class PersonService {
 
     private  List<Person> myList = new ArrayList<>();
-    public List<Person> addProduct(@Valid Person person)
+    public List<Person> addPerson(Person person)
     {
-
         //Do business stuff like retrieving details from db, or generating files pdfs
         myList.add(person);
         return myList;
