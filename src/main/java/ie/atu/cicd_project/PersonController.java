@@ -1,6 +1,7 @@
 package ie.atu.cicd_project;
 
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -14,7 +15,7 @@ import java.util.List;
 @Validated
 public class PersonController {
 
-    private PersonService myService;  //Dependency Injection for service
+    private final PersonService myService;  //Dependency Injection for service
 
     public PersonController(PersonService myService) {
 
@@ -25,27 +26,55 @@ public class PersonController {
     //Creating a class which is interested in request and responses. Separation of concern
 
     @PostMapping
-    public List<Person> addPerson(@RequestBody @Valid Person person){
+    public ResponseEntity<?> addPerson(@RequestBody @Valid Person person, BindingResult result ){
+        if (result.hasErrors()){
+            List<ErrorDetails> errors = new ArrayList<>();
+            result.getFieldErrors().forEach(error -> {
+                String fieldName = error.getField();
+                String errorMessage = error.getDefaultMessage();
+                errors.add(new ErrorDetails(fieldName, errorMessage));
+            });
+            return ResponseEntity.badRequest().body(errors);
+        }
         //Delegates logic to service layer
-        return myService.addPerson(person);
+        Person savedPerson = myService.addPerson(person);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedPerson);
     }
 
 
     @GetMapping
-    public List<Person> getAllPersons(){
-
-        return myService.getAllPersons();
+    public ResponseEntity<List<Person>> getAllPersons(){
+        List<Person> persons = myService.getAllPersons();
+        return ResponseEntity.ok(persons);  // Returns 200 OK with list of persons
     }
-    @PutMapping("/{id}")
-    List<Person> updatePerson(@PathVariable String id , @RequestBody @Valid Person updatedProduct){
+    @PutMapping("/{employeeId}")
 
-        return myService.updatePersons(id, updatedProduct);
+    public ResponseEntity<?>updatePerson(@PathVariable String employeeId, @RequestBody @Valid Person updatedProduct, BindingResult result){
+        if (result.hasErrors()) {
+            List<ErrorDetails>errors = new ArrayList<>();
+            result.getFieldErrors().forEach(error -> {
+                String fieldName = error.getField();
+                String errorMessage = error.getDefaultMessage();
+                errors.add(new ErrorDetails(fieldName, errorMessage));
+            });
+            return ResponseEntity.badRequest().body(errors);
+        }
+
+        Person updatedPerson = myService.updatePerson(employeeId, updatedProduct);
+        if (updatedPerson == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person not found with employeeId: " + employeeId);
+        }
+        return ResponseEntity.ok(updatedPerson);
     }
 
-    @DeleteMapping("/{id}")
-    List<Person> deletePerson(@PathVariable String id ){
-
-        return myService.deletePerson(id);
+    @DeleteMapping("/{employeeId}")
+    public ResponseEntity<?> deletePerson(@PathVariable String employeeId){
+        try {
+            myService.deletePerson(employeeId);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Person deleted successfully");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person with employeeId " + employeeId + " not found");
+        }
     }
 
 }
