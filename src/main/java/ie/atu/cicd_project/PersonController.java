@@ -48,7 +48,4 @@ public class PersonController {
         return myService.deletePerson(id);
     }
 
-
-
-
 }
