@@ -35,7 +35,7 @@ public class PersonService {
     @Transactional
     public Person updatePerson(String employeeId, Person updatedPerson) {
         // Check if the person with the given employeeId exists
-        Optional<Person> existingPersonOptional = personRepository.findById(updatedPerson.getId());
+        Optional<Person> existingPersonOptional = personRepository.findByEmployeeId(employeeId);
 
         if (existingPersonOptional.isPresent()) {
             Person existingPerson = existingPersonOptional.get();
