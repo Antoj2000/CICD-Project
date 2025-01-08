@@ -49,8 +49,7 @@ public class PersonController {
         return ResponseEntity.ok(persons);  // Returns 200 OK with list of persons
     }
     @PutMapping("/{employeeId}")
-
-    public ResponseEntity<?>updatePerson(@PathVariable String employeeId, @RequestBody @Valid Person updatedProduct, BindingResult result){
+    public ResponseEntity<?>updatePerson(@PathVariable String employeeId, @RequestBody @Valid Person updatedEmployee, BindingResult result){
         if (result.hasErrors()) {
             List<ErrorDetails>errors = new ArrayList<>();
             result.getFieldErrors().forEach(error -> {
@@ -61,9 +60,9 @@ public class PersonController {
             return ResponseEntity.badRequest().body(errors);
         }
 
-        Person updatedPerson = myService.updatePerson(employeeId, updatedProduct);
+        Person updatedPerson = myService.updatePerson(employeeId, updatedEmployee);
         if (updatedPerson == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person not found with employeeId: " + employeeId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee not found with Employee ID: " + employeeId);
         }
         return ResponseEntity.ok(updatedPerson);
     }
@@ -72,9 +71,9 @@ public class PersonController {
     public ResponseEntity<?> deletePerson(@PathVariable String employeeId){
         try {
             myService.deletePerson(employeeId);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Person deleted successfully");
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Employee deleted successfully");
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Person with employeeId " + employeeId + " not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee with Employee ID " + employeeId + " not found");
         }
     }
 

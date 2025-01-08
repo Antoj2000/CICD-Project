@@ -15,8 +15,6 @@ import java.util.List;
 @Service
 public class PersonService {
 
-    //private  List<Person> myList = new ArrayList<>();
-
     private final PersonRepository personRepository;
 
     public PersonService(PersonRepository personRepository){
@@ -24,7 +22,7 @@ public class PersonService {
     }
     public Person addPerson(Person person)
     {
-        //Do business stuff like retrieving details from db, or generating files pdfs
+
         return  personRepository.save(person);
     }
 
@@ -51,7 +49,7 @@ public class PersonService {
             // Save the updated person back to the database
             return personRepository.save(existingPerson);
         } else {
-            throw new IllegalArgumentException("Person with employeeId " + employeeId + " not found");
+            throw new IllegalArgumentException("Person with Employee ID " + employeeId + " not found");
         }
     }
     public void deletePerson(String employeeId) {
@@ -64,7 +62,7 @@ public class PersonService {
             // Delete the person
             personRepository.delete(personOptional.get());
         } else {
-            throw new IllegalArgumentException("Person with employeeId " + employeeId + " not found");
+            throw new IllegalArgumentException("Person with Employee ID " + employeeId + " not found");
         }
     }
 
