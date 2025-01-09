@@ -26,9 +26,15 @@ public class PersonService {
         return  personRepository.save(person);
     }
 
+    //Gets all employees
     public List<Person> getAllPersons() {
 
         return personRepository.findAll();
+    }
+
+    public Optional<Person> getEmployeeById(String employeeId) {
+
+        return personRepository.findByEmployeeId(employeeId);
     }
 
     // Update person by employeeId (Update)

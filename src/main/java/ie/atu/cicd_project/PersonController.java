@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -43,10 +44,24 @@ public class PersonController {
     }
 
 
-    @GetMapping
+    @GetMapping //Gets all employees
     public ResponseEntity<List<Person>> getAllPersons(){
         List<Person> persons = myService.getAllPersons();
         return ResponseEntity.ok(persons);  // Returns 200 OK with list of persons
+    }
+
+    @GetMapping("/{employeeId}")
+    public ResponseEntity<?> getEmployeeById(@PathVariable String employeeId) {
+        // Attempt to get the product by its productId
+        Optional<Person> person = myService.getEmployeeById(employeeId);
+
+        if (person.isPresent()) {
+            // If the employee is found, return a response with employee details
+            return ResponseEntity.status(HttpStatus.OK).body(person.get());
+        } else {
+            // If the employee is not found, return a 404 NOT FOUND response
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Employee with employee ID " + employeeId + " not found.");
+        }
     }
     @PutMapping("/{employeeId}")
     public ResponseEntity<?>updatePerson(@PathVariable String employeeId, @RequestBody @Valid Person updatedEmployee, BindingResult result){
